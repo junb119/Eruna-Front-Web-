@@ -1,0 +1,14 @@
+@import "tailwindcss";
+/* light 테마 기본값 */
+:root {
+  --color-bg: #ffffff;
+  --color-text: #333333;
+  --color-primary: #3b82f6;
+}
+
+/* dark 클래스가 붙으면 값 변경 */
+.dark {
+  --color-bg: #1f2937;
+  --color-text: #f3f4f6;
+  --color-primary: #60a5fa;
+}
