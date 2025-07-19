@@ -1,31 +1,25 @@
 // src/app/page.tsx
-import Link from "next/link";
 
-export default function Home() {
+import ClientTabs from "./components/ClientTabs";
+
+export default async function Home() {
+  // 서버에서 두 리소스 병렬 패칭
+  const [routinesRes, workoutsRes] = await Promise.all([
+    fetch("http://localhost:4000/routine"),
+    fetch("http://localhost:4000/workout"),
+  ]);
+  const [routines, workouts] = await Promise.all([
+    routinesRes.json(),
+    workoutsRes.json(),
+  ]);
+
   return (
-    <main className="p-8">
-      <h1 className="text-amber-400 mb-6">Erona MVP</h1>
-
-      <nav className="space-x-4 mb-8">
-        <Link
-          href="/routines"
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-blue-700 transition"
-        >
-          루틴 관리
-        </Link>
-        <Link
-          href="/records/new"
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-        >
-          기록 추가
-        </Link>
-      </nav>
-
-      <section>
-        <p>
-          앱처럼 부드러운 화면 전환과 Mock API 기반 CRUD 테스트를 시작해 보세요.
-        </p>
-      </section>
+    <main className="w-full h-full p-2">
+      {/* 
+        SSR에서 이미 두 리스트의 마크업을 다 만들고 
+        ClientTabs로 전달합니다. 
+      */}
+      <ClientTabs routines={routines} workouts={workouts} />
     </main>
   );
 }

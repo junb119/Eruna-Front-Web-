@@ -1,35 +1,46 @@
-"use client";
-
 import React from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { usePathname } from "next/navigation";
-import "./globals.css"; // ← 이 줄이 반드시 맨 위에 있어야 Tailwind가 로드됩니다
+import "./globals.css";
+import AnimatedWrapper from "./components/AnimatedWrapper";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const path = usePathname();
-
   return (
     <html lang="ko">
       <head>
-        <title>이러나</title>
+        <title>🛠 Erona Debug</title>
+        <meta name="debug" content="head-loaded" />
+        {/* 프리커넥트 */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
+        {/* 기본 아이콘 (Filled) */}
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet"
+        />
+        {/* Outlined 스타일 */}
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+          rel="stylesheet"
+        />
+        {/* Symbols: Outlined */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet"
+        />
+        {/* 필요 시 더 추가 가능 */}
+        {/* <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet"/> */}
       </head>
       <body>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={path}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-scrren border h-screen bg-red-500"
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
+        <div className="max-w-[375px] h-screen ">
+          <AnimatedWrapper>{children}</AnimatedWrapper>
+        </div>
       </body>
     </html>
   );

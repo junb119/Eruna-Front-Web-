@@ -1,0 +1,138 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "email": "user@example.com",
+      "password": "hashed-password",
+      "name": "홍길동",
+      "profile_image": "",
+      "provider": "local",
+      "oauth_id": "",
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
+    }
+  ],
+  "workout_category": [
+    {
+      "id": "cat1",
+      "name": "근력 운동",
+      "description": "근력 향상을 위한 운동",
+      "order": 1,
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
+    }
+  ],
+  "workout_type": [
+    {
+      "id": "type1",
+      "name": "반복(reps)",
+      "unit_primary": "reps",
+      "unit_secondary": "kg",
+      "description": "반복 횟수 기반 운동",
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
+    }
+  ],
+  "workout": [
+    {
+      "id": "w1",
+      "name": "푸시업",
+      "description": "가슴·삼두 운동",
+      "category_id": "cat1",
+      "type_id": "type1",
+      "created_by": "u1",
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
+    },
+    {
+      "id": "a5bb",
+      "name": "테스트",
+      "description": "테스트영"
+    },
+    {
+      "id": "aaa8",
+      "name": "ㄴㅁㅇㄹㅌㅊㅋ",
+      "description": "ㅍ"
+    }
+  ],
+  "routine": [
+    {
+      "id": "r1",
+      "name": "아침 루틴",
+      "description": "스트레칭 + 가벼운 근력",
+      "created_by": "u1",
+      "is_public": true,
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
+    }
+  ],
+  "routine_item": [
+    {
+      "id": "ri1",
+      "routine_id": "r1",
+      "workout_id": "w1",
+      "order": 1,
+      "set_count": 3,
+      "rep_count": 12,
+      "duration": 0,
+      "distance": 0,
+      "weight": 0,
+      "note": "",
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
+    }
+  ],
+  "record": [
+    {
+      "id": "rec1",
+      "user_id": "u1",
+      "date": "2025-07-19",
+      "start_time": "08:00",
+      "end_time": "08:30",
+      "memo": "아침 운동 완료",
+      "created_at": "2025-07-19T08:30:00.000Z",
+      "updated_at": "2025-07-19T08:30:00.000Z"
+    }
+  ],
+  "record_item": [
+    {
+      "id": "rci1",
+      "record_id": "rec1",
+      "workout_id": "w1",
+      "order": 1,
+      "set_count": 3,
+      "rep_count": 12,
+      "duration": 0,
+      "distance": 0,
+      "weight": 0,
+      "memo": "",
+      "created_at": "2025-07-19T08:30:00.000Z",
+      "updated_at": "2025-07-19T08:30:00.000Z"
+    }
+  ],
+  "favorite": [
+    {
+      "id": "fav1",
+      "user_id": "u1",
+      "workout_id": "w1",
+      "routine_id": "r1",
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
+    }
+  ],
+  "user_settings": [
+    {
+      "id": "us1",
+      "user_id": "u1",
+      "default_rest_time": 60,
+      "preferred_unit_weight": "kg",
+      "preferred_unit_distance": "km",
+      "preferred_unit_time": "min",
+      "enable_notification": true,
+      "dark_mode": false,
+      "language": "ko",
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
+    }
+  ]
+}
