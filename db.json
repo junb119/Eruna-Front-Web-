@@ -94,12 +94,21 @@
     {
       "id": "a5bb",
       "name": "테스트",
-      "description": "테스트영"
+      "description": "테스트영",
+      "category_id": "cat1",
+      "type_id": "type2",
+      "created_by": "u1",
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
     },
     {
       "id": "aaa8",
       "name": "ㄴㅁㅇㄹㅌㅊㅋ",
-      "description": "ㅍ"
+      "description": "ㅍ","category_id": "cat1",
+      "type_id": "type3",
+      "created_by": "u1",
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
     }
   ],
   "routine": [
