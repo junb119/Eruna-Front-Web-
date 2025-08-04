@@ -3,6 +3,8 @@
 
 import { useState, ReactNode, Children } from "react";
 import Link from "next/link";
+import Menu from "./Menu";
+import { useSidebarStore } from "@/store/useSidebarStore";
 
 type Tab = "routines" | "workouts";
 interface Routine {
@@ -24,26 +26,30 @@ export default function ClientTabs({
   workouts: Workout[];
 }) {
   const [tab, setTab] = useState<Tab>("routines");
-
+  const toggle = useSidebarStore((state) => state.toggle);
   // 두 리스트를 미리 SSR 마크업으로 생성해 두고
   const listElements = [
     <ul key="r" className="space-y-2">
       {routines.map((r) => (
         <li key={r.id} className="p-3 border rounded">
-          <h2 className="font-semibold">{r.name}</h2>
-          {r.description && (
-            <p className="text-sm text-gray-600">{r.description}</p>
-          )}
+          <Link href={`/routine/${r.id}`}>
+            <h2 className="font-semibold">{r.name}</h2>
+            {r.description && (
+              <p className="text-sm text-gray-600">{r.description}</p>
+            )}
+          </Link>
         </li>
       ))}
     </ul>,
     <ul key="w" className="space-y-2">
       {workouts.map((w) => (
         <li key={w.id} className="p-3 border rounded">
-          <h2 className="font-semibold">{w.name}</h2>
-          {w.description && (
-            <p className="text-sm text-gray-600">{w.description}</p>
-          )}
+          <Link href={`/workout/${w.id}`}>
+            <h2 className="font-semibold">{w.name}</h2>
+            {w.description && (
+              <p className="text-sm text-gray-600">{w.description}</p>
+            )}
+          </Link>
         </li>
       ))}
     </ul>,
@@ -69,7 +75,7 @@ export default function ClientTabs({
             </li>
           ))}
         </ul>
-        <span className="material-icons !text-4xl">menu</span>
+        <Menu onClick={toggle} />
       </nav>
 
       {/* 탭에 맞춰 미리 만든 SSR 마크업을 show/hide */}

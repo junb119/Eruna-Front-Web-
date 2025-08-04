@@ -1,6 +1,8 @@
 // src/app/add-workout/page.tsx
 
+import { useRouter } from "next/router";
 import AddWorkoutForm from "../components/AddWorkoutForm";
+import GobackBtn from "../components/GobackBtn";
 
 export const metadata = {
   title: "운동 추가",
@@ -9,6 +11,7 @@ export const metadata = {
 export default function AddWorkoutPage() {
   return (
     <main className="w-full h-full p-2">
+      <GobackBtn />
       <h1 className="text-xl font-bold mb-4">새 운동 추가</h1>
       {/* 클라이언트 컴포넌트로 분리된 폼 */}
       <AddWorkoutForm />

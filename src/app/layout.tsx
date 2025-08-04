@@ -1,6 +1,7 @@
 import React from "react";
 import "./globals.css";
 import AnimatedWrapper from "./components/AnimatedWrapper";
+import SideBar from "./components/SideBar";
 
 export default function RootLayout({
   children,
@@ -38,7 +39,8 @@ export default function RootLayout({
         {/* <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet"/> */}
       </head>
       <body>
-        <div className="max-w-[375px] h-screen ">
+        <div className="relative max-w-[375px] h-screen overflow-x-hidden">
+          <SideBar />
           <AnimatedWrapper>{children}</AnimatedWrapper>
         </div>
       </body>
