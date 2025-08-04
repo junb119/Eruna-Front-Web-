@@ -1,0 +1,18 @@
+import { fetcher } from "@/lib/fetcher";
+import useSWR from "swr";
+
+export const useWorkoutCategory = (categoryId: string | null | undefined) => {
+  const shouldFetch = categoryId && typeof categoryId === "string";
+
+  const { data, isLoading, error, mutate } = useSWR(
+    shouldFetch ? `/workout_category/${categoryId}` : null,
+    fetcher
+  );
+
+  return {
+    category: data ?? null,
+    isLoading,
+    isError: !!error,
+    mutate,
+  };
+};

@@ -1,6 +1,7 @@
 "use client";
 import GobackBtn from "@/app/components/GobackBtn";
 import { useWorkout } from "@/app/hooks/useWorkout";
+import { useWorkoutCategory } from "@/app/hooks/useWorkoutCategory";
 import { useWorkoutType } from "@/app/hooks/useWorkoutType";
 import { useParams } from "next/navigation";
 
@@ -23,9 +24,24 @@ const WorkoutDetail = () => {
     isError: typeIsError,
   } = useWorkoutType(workout?.type_id);
 
-  if (!workoutId || workoutIsLoading || typeIsLoading) return <p>loading</p>;
-  if (workoutIsError || typeIsError || !workout || !type)
-    return <p>오류 발생</p>;
+  const {
+    category,
+    isLoading: categoryIsLoading,
+    isError: categoryIsError,
+  } = useWorkoutCategory(workout?.category_id);
+
+  const isLoading =
+    !workoutId || workoutIsLoading || typeIsLoading || categoryIsLoading;
+  const Error =
+    workoutIsError ||
+    typeIsError ||
+    categoryIsError ||
+    !workout ||
+    !type ||
+    !category;
+
+  if (isLoading) return <p>loading</p>;
+  if (Error) return <p>오류 발생</p>;
 
   return (
     <div className="p-4">
@@ -33,6 +49,7 @@ const WorkoutDetail = () => {
       <h1 className="text-xl font-bold">{workout.name}</h1>
       <p className="text-gray-600">{workout.description}</p>
       <p className="text-sm mt-2">기록 타입: {type.name}</p>
+      <p>카테고리: {category.name}</p>
     </div>
   );
 };
