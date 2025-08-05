@@ -1,8 +1,8 @@
 "use client";
 import GobackBtn from "@/app/components/GobackBtn";
-import { useWorkout } from "@/app/hooks/useWorkout";
-import { useWorkoutCategory } from "@/app/hooks/useWorkoutCategory";
-import { useWorkoutType } from "@/app/hooks/useWorkoutType";
+import { useGetWorkout } from "@/app/hooks/useGetWorkout";
+import { useGetWorkoutCategory } from "@/app/hooks/useGetWorkoutCategory";
+import { useGetWorkoutType } from "@/app/hooks/useGetWorkoutType";
 import { useParams } from "next/navigation";
 
 const WorkoutDetail = () => {
@@ -15,20 +15,20 @@ const WorkoutDetail = () => {
     workout,
     isLoading: workoutIsLoading,
     isError: workoutIsError,
-  } = useWorkout(workoutId);
+  } = useGetWorkout(workoutId);
   console.log(workout);
 
   const {
     type,
     isLoading: typeIsLoading,
     isError: typeIsError,
-  } = useWorkoutType(workout?.type_id);
+  } = useGetWorkoutType(workout?.type_id);
 
   const {
     category,
     isLoading: categoryIsLoading,
     isError: categoryIsError,
-  } = useWorkoutCategory(workout?.category_id);
+  } = useGetWorkoutCategory(workout?.category_id);
 
   const isLoading =
     !workoutId || workoutIsLoading || typeIsLoading || categoryIsLoading;

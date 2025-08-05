@@ -1,7 +1,7 @@
 import { fetcher } from "@/lib/fetcher";
 import useSWR from "swr";
 
-export const useWorkoutCategory = (categoryId: string | null | undefined) => {
+export const useGetWorkoutCategory = (categoryId: string | null | undefined) => {
   const shouldFetch = categoryId && typeof categoryId === "string";
 
   const { data, isLoading, error, mutate } = useSWR(

@@ -1,7 +1,7 @@
 import { fetcher } from "@/lib/fetcher";
 import useSWR from "swr";
 // useWorkoutType.ts
-export function useWorkoutType(typeId: string | undefined) {
+export function useGetWorkoutType(typeId: string | undefined) {
   const shouldFetch = !!typeId;
 
   const { data, error, isLoading } = useSWR(

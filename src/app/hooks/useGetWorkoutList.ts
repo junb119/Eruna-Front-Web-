@@ -1,7 +1,7 @@
 import { API_BASE, fetcher } from "@/lib/fetcher";
 import useSWR from "swr";
 
-export function useWorkoutList() {
+export function useGetWorkoutList() {
   const { data, error, isLoading, mutate } = useSWR(
     `${API_BASE}/workout/`,
     fetcher

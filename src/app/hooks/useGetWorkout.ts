@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { API_BASE, fetcher } from "@/lib/fetcher";
 
-export function useWorkout(id: string | null | undefined) {
+export function useGetWorkout(id: string | null | undefined) {
   const shouldFetch = id && typeof id === "string";
 
   const { data, error, isLoading, mutate } = useSWR(
