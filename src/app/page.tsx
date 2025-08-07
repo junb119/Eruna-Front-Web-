@@ -5,8 +5,8 @@ import ClientTabs from "./components/ClientTabs";
 export default async function Home() {
   // 서버에서 두 리소스 병렬 패칭
   const [routinesRes, workoutsRes] = await Promise.all([
-    fetch("http://localhost:4000/routine"),
-    fetch("http://localhost:4000/workout"),
+    fetch("http://localhost:4000/routines"),
+    fetch("http://localhost:4000/workouts"),
   ]);
   const [routines, workouts] = await Promise.all([
     routinesRes.json(),

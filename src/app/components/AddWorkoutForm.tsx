@@ -33,7 +33,7 @@ export default function AddWorkoutForm() {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const res = await fetch(`${API_BASE}/workout_category`);
+        const res = await fetch(`${API_BASE}/workoutCategories`);
         const data = await res.json();
         setCategories(data);
       } catch (error) {
@@ -42,7 +42,7 @@ export default function AddWorkoutForm() {
     };
     const loadTypes = async () => {
       try {
-        const res = await fetch(`${API_BASE}/workout_type`);
+        const res = await fetch(`${API_BASE}/workoutTypes`);
         const data = await res.json();
         setTypes(data);
       } catch (error) {
@@ -57,7 +57,7 @@ export default function AddWorkoutForm() {
   const handleAddCategory = async () => {
     if (!newCategory.trim()) return; // 새카테고리 비어있을 시
     try {
-      const res = await fetch(`${API_BASE}/workout_category`, {
+      const res = await fetch(`${API_BASE}/workoutCategories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newCategory }),
@@ -84,7 +84,7 @@ export default function AddWorkoutForm() {
     setLoading(true);
     setError(null);
     try {
-      await fetch(`${API_BASE}/workout`, {
+      await fetch(`${API_BASE}/workouts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, description, categoryId, typeId }),

@@ -3,7 +3,7 @@ import useSWR from "swr";
 
 export function useGetWorkoutList() {
   const { data, error, isLoading, mutate } = useSWR(
-    `${API_BASE}/workout/`,
+    `/workouts/?_expand=workoutCategory&_expand=workoutType&_expand=workoutTarget`,
     fetcher
   );
 

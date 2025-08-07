@@ -12,7 +12,7 @@
       "updated_at": "2025-07-19T00:00:00.000Z"
     }
   ],
-  "workout_category": [
+  "workoutCategories": [
     {
       "id": "cat1",
       "name": "근력 운동",
@@ -21,28 +21,14 @@
       "created_at": "2025-07-19T00:00:00.000Z",
       "updated_at": "2025-07-19T00:00:00.000Z"
     },
-    {
-      "id": "364b",
-      "name": "test"
-    },
-    {
-      "id": "6bee",
-      "name": "adsf"
-    },
-    {
-      "id": "2297",
-      "name": "xzcv"
-    },
-    {
-      "id": "451a",
-      "name": "vzxcv"
-    },
-    {
-      "id": "36f8",
-      "name": "test2"
-    }
+    { "id": "364b", "name": "test" },
+    { "id": "6bee", "name": "adsf" },
+    { "id": "2297", "name": "xzcv" },
+    { "id": "451a", "name": "vzxcv" },
+    { "id": "36f8", "name": "test2" }
   ],
-  "workout_type": [
+  "workoutTargets": [{ "id": "target1", "name": "복근" }],
+  "workoutTypes": [
     {
       "id": "type1",
       "name": "세트 + 횟수",
@@ -80,14 +66,15 @@
       "updated_at": "2025-07-19T00:00:00.000Z"
     }
   ],
-  "workout": [
+  "workouts": [
     {
       "id": "w1",
       "name": "푸시업",
       "description": "가슴·삼두 운동",
-      "category_id": "cat1",
-      "type_id": "type1",
-      "created_by": "u1",
+      "workoutCategoryId": "cat1",
+      "workoutTypeId": "type1",
+      "workoutTargetId": "target1",
+      "userId": "u1",
       "created_at": "2025-07-19T00:00:00.000Z",
       "updated_at": "2025-07-19T00:00:00.000Z"
     },
@@ -95,38 +82,41 @@
       "id": "a5bb",
       "name": "테스트",
       "description": "테스트영",
-      "category_id": "cat1",
-      "type_id": "type2",
-      "created_by": "u1",
+      "workoutCategoryId": "cat1",
+      "workoutTypeId": "type2",
+      "workoutTargetId": "target1",
+      "userId": "u1",
       "created_at": "2025-07-19T00:00:00.000Z",
       "updated_at": "2025-07-19T00:00:00.000Z"
     },
     {
       "id": "aaa8",
       "name": "ㄴㅁㅇㄹㅌㅊㅋ",
-      "description": "ㅍ","category_id": "cat1",
-      "type_id": "type3",
-      "created_by": "u1",
+      "description": "ㅍ",
+      "workoutCategoryId": "cat1",
+      "workoutTypeId": "type3",
+      "workoutTargetId": "target1",
+      "userId": "u1",
       "created_at": "2025-07-19T00:00:00.000Z",
       "updated_at": "2025-07-19T00:00:00.000Z"
     }
   ],
-  "routine": [
+  "routines": [
     {
       "id": "r1",
       "name": "아침 루틴",
       "description": "스트레칭 + 가벼운 근력",
-      "created_by": "u1",
+      "userId": "u1",
       "is_public": true,
       "created_at": "2025-07-19T00:00:00.000Z",
       "updated_at": "2025-07-19T00:00:00.000Z"
     }
   ],
-  "routine_item": [
+  "routineItems": [
     {
       "id": "ri1",
-      "routine_id": "r1",
-      "workout_id": "w1",
+      "routineId": "r1",
+      "workoutId": "w1",
       "order": 1,
       "set_count": 3,
       "rep_count": 12,
@@ -138,10 +128,10 @@
       "updated_at": "2025-07-19T00:00:00.000Z"
     }
   ],
-  "record": [
+  "records": [
     {
       "id": "rec1",
-      "user_id": "u1",
+      "userId": "u1",
       "date": "2025-07-19",
       "start_time": "08:00",
       "end_time": "08:30",
@@ -150,11 +140,11 @@
       "updated_at": "2025-07-19T08:30:00.000Z"
     }
   ],
-  "record_item": [
+  "recordItems": [
     {
       "id": "rci1",
-      "record_id": "rec1",
-      "workout_id": "w1",
+      "recordId": "rec1",
+      "workoutId": "w1",
       "order": 1,
       "set_count": 3,
       "rep_count": 12,
@@ -166,12 +156,12 @@
       "updated_at": "2025-07-19T08:30:00.000Z"
     }
   ],
-  "favorite": [
+  "favorites": [
     {
       "id": "fav1",
-      "user_id": "u1",
-      "workout_id": "w1",
-      "routine_id": "r1",
+      "userId": "u1",
+      "workoutId": "w1",
+      "routineId": "r1",
       "created_at": "2025-07-19T00:00:00.000Z",
       "updated_at": "2025-07-19T00:00:00.000Z"
     }
@@ -179,7 +169,7 @@
   "user_settings": [
     {
       "id": "us1",
-      "user_id": "u1",
+      "userId": "u1",
       "default_rest_time": 60,
       "preferred_unit_weight": "kg",
       "preferred_unit_distance": "km",
