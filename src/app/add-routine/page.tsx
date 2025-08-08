@@ -9,7 +9,6 @@ export default function AddRoutinePage() {
   return (
     <main>
       <GobackBtn />
-      <h1 className="text-xl font-bold mb-4">새 루틴 추가</h1>
       
       <AddRoutineForm />
       

@@ -1,9 +1,9 @@
-import { API_BASE, fetcher } from "@/lib/fetcher";
+import {  fetcher } from "@/lib/fetcher";
 import useSWR from "swr";
 
 export function useGetWorkoutList() {
   const { data, error, isLoading, mutate } = useSWR(
-    `/workouts/?_expand=workoutCategory&_expand=workoutType&_expand=workoutTarget`,
+    `/workouts?_expand=workoutCategory&_expand=workoutType&_expand=workoutTarget`,
     fetcher
   );
 

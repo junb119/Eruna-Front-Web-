@@ -7,12 +7,14 @@ import React, { useState } from "react";
 import SelectWorkoutList from "./SelectWorkoutList";
 
 const AddRoutineForm = () => {
+  
   const [showWorkoutList, setShowWorkoutList] = useState(false);
   const router = useRouter();
   const [name, setName] = useState("");
   return (
     <div>
       {showWorkoutList && <SelectWorkoutList show={showWorkoutList} />}
+      <h1 className="text-xl font-bold mb-4">새 루틴 추가</h1>
 
       <form className="space-y-4">
         <div>
