@@ -1,5 +1,3 @@
-// add-routine/page.tsx
-
 import React from "react";
 import GobackBtn from "../components/GobackBtn";
 import AddRoutineForm from "../components/AddRoutineForm";
@@ -12,6 +10,7 @@ export default function AddRoutinePage() {
     <main>
       <GobackBtn />
       <AddRoutineForm />
+      
     </main>
   );
 }

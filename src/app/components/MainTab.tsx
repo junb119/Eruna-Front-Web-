@@ -6,7 +6,7 @@ type Tab = "routines" | "workouts";
 
 const MainTab = () => {
   const [activeTab, setActiveTab] = useState<Tab>("routines");
-
+  
   return (
     <ul className="flex gap-4 items-center">
       <li>

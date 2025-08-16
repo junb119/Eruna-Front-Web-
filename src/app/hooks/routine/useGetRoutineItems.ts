@@ -5,7 +5,7 @@ export const useGetRoutineItems = (routineId: string | null | undefined) => {
   const shouldFetch = routineId && typeof routineId === "string";
 
   const { data, error, isLoading, mutate } = useSWR(
-    shouldFetch ? `/routine_item?routine_id=${routineId}&_expand=workout` : null,
+    shouldFetch ? `/routineItems?routine_id=${routineId}&_expand=workout` : null,
     fetcher
   );
   console.log("test", data);

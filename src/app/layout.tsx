@@ -41,7 +41,9 @@ export default function RootLayout({
       <body>
         <div className="relative max-w-[375px] h-screen overflow-x-hidden">
           <SideBar />
-          <AnimatedWrapper>{children}</AnimatedWrapper>
+          <AnimatedWrapper>
+            {children}
+            </AnimatedWrapper>
         </div>
       </body>
     </html>

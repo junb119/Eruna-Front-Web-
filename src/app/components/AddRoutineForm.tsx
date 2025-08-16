@@ -1,21 +1,16 @@
+// components/AddRoutineForm.tsx
 "use client";
 
-import { div } from "framer-motion/client";
+import { useRoutineBuilder } from "@/store/routineBuilder";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-
-import SelectWorkoutList from "./SelectWorkoutList";
+import GobackBtn from "./GobackBtn";
 
 const AddRoutineForm = () => {
-  
-  const [showWorkoutList, setShowWorkoutList] = useState(false);
   const router = useRouter();
-  const [name, setName] = useState("");
+  const { name, setName } = useRoutineBuilder();
   return (
     <div>
-      {showWorkoutList && <SelectWorkoutList show={showWorkoutList} />}
       <h1 className="text-xl font-bold mb-4">새 루틴 추가</h1>
-
       <form className="space-y-4">
         <div>
           <label htmlFor="">루틴이름</label>
@@ -33,7 +28,10 @@ const AddRoutineForm = () => {
           <ul>
             <li></li>
           </ul>
-          <button type="button" onClick={() => setShowWorkoutList(true)}>
+          <button
+            type="button"
+            onClick={() => router.push("/add-routine/select")}
+          >
             + 운동추가
           </button>
         </div>
