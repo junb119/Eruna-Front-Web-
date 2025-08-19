@@ -15,7 +15,7 @@ const WorkoutDetail = () => {
     workout,
     isLoading: workoutIsLoading,
     isError: workoutIsError,
-  } = useGetWorkout(workoutId);
+  } = workoutId);
   console.log(workout);
 
   // const {
