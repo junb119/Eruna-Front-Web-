@@ -7,7 +7,7 @@ import GobackBtn from "./GobackBtn";
 
 const AddRoutineForm = () => {
   const router = useRouter();
-  const { name, setName } = useRoutineBuilder();
+  const { name, setName, items, clearRoutine } = useRoutineBuilder();
   return (
     <div>
       <h1 className="text-xl font-bold mb-4">새 루틴 추가</h1>
@@ -26,7 +26,9 @@ const AddRoutineForm = () => {
         <div>
           <h2>운동</h2>
           <ul>
-            <li></li>
+            {items.map((item) => (
+              <li key={item.workoutId}>{item.workoutId}</li>
+            ))}
           </ul>
           <button
             type="button"
@@ -36,7 +38,13 @@ const AddRoutineForm = () => {
           </button>
         </div>
         <div>
-          <button type="button" onClick={() => router.back()}>
+          <button
+            type="button"
+            onClick={() => {
+              clearRoutine();
+              router.back();
+            }}
+          >
             취소
           </button>
           <button>저장</button>
