@@ -1,20 +1,27 @@
-"use client";
+// "use client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// 운동 설정 모드 (기존과 동일)
-export type WorkoutMode =
-  | "strength" // 세트x횟수x무게
-  | "repOnly" // 세트x횟수
-  | "duration" // 세트x시간
-  | "unset"; // 미설정
+/** 운동 설정 모드 — mock의 workoutTypes.unit_primary와 1:1 매핑 */
+export type WorkoutMode = "strength" | "repOnly" | "duration" | "unset";
 
-/** 루틴에 들어가는 개별 항목 (기존과 동일) */
+/** 루틴 아이템(저장 형태) */
 export type RoutineItem = {
   tempId: string;
+  // 기본 운동 정보
   workoutId: string;
   name: string;
+
+  // 🔽 운동과 직접적으로 연결된 메타(필수만)
+  categoryId?: string;
+  categoryName?: string;
+  typeId?: string;
+  typeName?: string;
+
+  // 타입에서 온 단위에 따라 모드 자동 결정
   mode: WorkoutMode;
+
+  // 기본 설정(모드는 타입에서 유도)
   config: {
     sets?: number;
     reps?: number;
@@ -25,72 +32,106 @@ export type RoutineItem = {
   notes?: string;
 };
 
-// ✅ State 타입을 확장합니다.
+/** add 시에 받는 페이로드 */
+type AddWorkoutPayload = {
+  workoutId: string;
+  name: string;
+  categoryId?: string;
+  categoryName?: string;
+  typeId?: string;
+  typeName?: string;
+  /** mock의 workoutTypes.unit_primary 값 그대로 전달 (strength/repOnly/duration) */
+  typeUnitPrimary?: WorkoutMode; // ← 중요: mode 유도에 사용
+
+  /** 필요시 즉시 오버라이드도 허용 */
+  mode?: WorkoutMode;
+  config?: RoutineItem["config"];
+};
+
 type State = {
   name: string;
-  items: RoutineItem[]; // 선택된 운동 목록을 저장할 배열
+  items: RoutineItem[];
   setName: (v: string) => void;
-  // ✅ 운동을 추가/제거하는 토글 액션
+
+  addWorkout: (payload: AddWorkoutPayload) => void;
+  removeWorkout: (workoutId: string) => void;
+
+  /** 하위 호환(있으면 유지) */
   toggleWorkout: (workout: { workoutId: string; name: string }) => void;
-  // ✅ 특정 아이템의 설정을 변경하는 액션 (추후 사용)
-  updateItemConfig: (tempId: string, newConfig: RoutineItem['config']) => void;
-  // ✅ 전체 루틴을 초기화하는 액션
+
+  updateItemConfig: (tempId: string, newConfig: RoutineItem["config"]) => void;
   clearRoutine: () => void;
 };
 
-const initialState = {
-  name: "",
-  items: [],
-};
+/** unit_primary → WorkoutMode 매핑 (안 들어오면 unset) */
+function modeFromUnitPrimary(u?: WorkoutMode): WorkoutMode {
+  if (u === "strength" || u === "repOnly" || u === "duration") return u;
+  return "unset";
+}
+
+function defaultConfigFor(mode: WorkoutMode): RoutineItem["config"] {
+  switch (mode) {
+    case "strength":
+      return { sets: 3, reps: 8, weight: 0, restSec: 90 };
+    case "repOnly":
+      return { sets: 3, reps: 12, restSec: 60 };
+    case "duration":
+      return { sets: 1, timeSec: 600, restSec: 0 }; // 10분
+    default:
+      return { sets: 3, reps: 10, restSec: 60 };
+  }
+}
 
 export const useRoutineBuilder = create<State>()(
   persist(
-    (set) => ({
-      ...initialState,
+    (set, get) => ({
+      name: "",
+      items: [],
       setName: (v) => set({ name: v }),
 
-      // ✅ toggleWorkout 액션 구현
-      toggleWorkout: (workout) =>
-        set((state) => {
-          const isAlreadyIn = state.items.some(
-            (item) => item.workoutId === workout.workoutId
-          );
+      addWorkout: (p) => {
+        const { items } = get();
+        if (items.some((i) => i.workoutId === p.workoutId)) return;
 
-          if (isAlreadyIn) {
-            // 이미 목록에 있으면 -> 제거
-            return {
-              items: state.items.filter(
-                (item) => item.workoutId !== workout.workoutId
-              ),
-            };
-          } else {
-            // 목록에 없으면 -> 기본값을 가진 RoutineItem 형태로 추가
-            const newItem: RoutineItem = {
-              tempId: `temp_${Date.now()}`, // 고유한 임시 ID 생성
-              workoutId: workout.workoutId,
-              name: workout.name,
-              mode: "unset", // 기본 모드
-              config: { // 기본 설정
-                sets: 3,
-                reps: 10,
-                restSec: 60,
-              },
-            };
-            return { items: [...state.items, newItem] };
-          }
-        }),
-      
-      // ✅ updateItemConfig 액션 구현
+        // 1) 우선순위: 명시된 mode → 없으면 typeUnitPrimary에서 유도
+        const mode = p.mode ?? modeFromUnitPrimary(p.typeUnitPrimary);
+        // 2) config 기본값
+        const config = p.config ?? defaultConfigFor(mode);
+
+        const newItem: RoutineItem = {
+          tempId: `tmp_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+          workoutId: p.workoutId,
+          name: p.name,
+          categoryId: p.categoryId,
+          categoryName: p.categoryName,
+          typeId: p.typeId,
+          typeName: p.typeName,
+          mode,
+          config,
+        };
+
+        set({ items: [...items, newItem] });
+      },
+
+      removeWorkout: (workoutId) =>
+        set((s) => ({ items: s.items.filter((i) => i.workoutId !== workoutId) })),
+
+      // 하위 호환 — 최소 정보만으로 add/remove
+      toggleWorkout: ({ workoutId, name }) => {
+        const { items, addWorkout, removeWorkout } = get();
+        if (items.some((i) => i.workoutId === workoutId)) removeWorkout(workoutId);
+        else addWorkout({ workoutId, name });
+      },
+
       updateItemConfig: (tempId, newConfig) =>
-        set((state) => ({
-          items: state.items.map((item) =>
-            item.tempId === tempId ? { ...item, config: newConfig } : item
+        set((s) => ({
+          items: s.items.map((i) =>
+            i.tempId === tempId ? { ...i, config: { ...i.config, ...newConfig } } : i
           ),
         })),
-        
-      // ✅ clearRoutine 액션 구현
-      clearRoutine: () => set(initialState),
+
+      clearRoutine: () => set({ name: "", items: [] }),
     }),
-    { name: "erona:routine-builder", version: 1 }
+    { name: "erona:routine-builder", version: 3 }
   )
 );

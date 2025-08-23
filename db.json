@@ -32,7 +32,7 @@
     {
       "id": "type1",
       "name": "세트 + 횟수",
-      "unit_primary": "reps",
+      "unit_primary": "repOnly",
       "unit_secondary": "kg",
       "description": "반복 횟수 기반 운동",
       "created_at": "2025-07-19T00:00:00.000Z",
@@ -41,7 +41,7 @@
     {
       "id": "type2",
       "name": "세트 + 횟수 + 무게",
-      "unit_primary": "reps",
+      "unit_primary": "strength",
       "unit_secondary": "kg",
       "description": "반복 횟수 기반 운동",
       "created_at": "2025-07-19T00:00:00.000Z",
@@ -49,17 +49,8 @@
     },
     {
       "id": "type3",
-      "name": "타이머",
-      "unit_primary": "reps",
-      "unit_secondary": "kg",
-      "description": "반복 횟수 기반 운동",
-      "created_at": "2025-07-19T00:00:00.000Z", 
-      "updated_at": "2025-07-19T00:00:00.000Z"
-    },
-    {
-      "id": "type4",
       "name": "세트 + 타이머",
-      "unit_primary": "reps",
+      "unit_primary": "duration",
       "unit_secondary": "kg",
       "description": "반복 횟수 기반 운동",
       "created_at": "2025-07-19T00:00:00.000Z",

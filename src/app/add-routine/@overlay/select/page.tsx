@@ -130,154 +130,131 @@
 //     </div>
 //   );
 // }
-
+// app/add-routine/@overlay/select/page.tsx (혹은 컴포넌트 파일)
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useGetWorkoutList } from "@/app/hooks/workout/useGetWorkoutList";
 import { useEffect, useMemo, useState } from "react";
+import { useGetWorkoutListExpanded } from "@/app/hooks/workout/useGetWorkoutListExpanded";
 import { useRoutineBuilder } from "@/store/routineBuilder";
 
 export default function SelectWorkoutOverlay() {
   const router = useRouter();
-  const { workouts = [], isLoading, isError } = useGetWorkoutList();
+  const { workouts = [], isLoading, isError } = useGetWorkoutListExpanded();
 
-  // ✅ 스토어에서 현재 선택된 workoutId 목록
-  const { items, toggleWorkout, removeWorkout } = useRoutineBuilder() as {
-    items: { workoutId: string }[];
-    toggleWorkout: (args: { workoutId: string; name?: string }) => void;
-    removeWorkout?: (workoutId: string) => void; // 없을 수도 있음
-  };
+  const { items, addWorkout, removeWorkout, toggleWorkout } = useRoutineBuilder() as any;
+
+  // 스토어에 있는 선택 목록을 로컬 체크상태(저장 전까지는 스토어 미변경)
   const selectedIdsFromStore = useMemo(
-    () => items.map((it) => String(it.workoutId)),
+    () => items.map((it: any) => String(it.workoutId)),
     [items]
   );
-
-  // ✅ 이번 오버레이에서 표시/편집할 체크 상태
   const [checked, setChecked] = useState<string[]>([]);
+  useEffect(() => setChecked(selectedIdsFromStore), [selectedIdsFromStore]);
 
-  // ▶ 초기 진입 시: 스토어에 있는 것들로 체크 상태 채우기
-  useEffect(() => {
-    setChecked(selectedIdsFromStore);
-  }, [selectedIdsFromStore]);
+  const workoutMap = useMemo(() => {
+    const m = new Map<string, (typeof workouts)[number]>();
+    workouts.forEach((w) => m.set(String(w.id), w));
+    return m;
+  }, [workouts]);
 
-  // ▶ 개별 항목 토글(추가/해제 모두 허용)
-  function toggleLocal(id: string) {
-    setChecked((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  }
+  const toggleLocal = (id: string) =>
+    setChecked((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
-  // ▶ 저장: 델타 계산 → 스토어 반영
   function saveSelections() {
     const setFromStore = new Set(selectedIdsFromStore);
     const setFromUI = new Set(checked);
 
-    // 추가해야 할 것: UI엔 체크되어 있는데 스토어에는 없는 것
     const toAdd = [...setFromUI].filter((id) => !setFromStore.has(id));
-    // 제거해야 할 것: 스토어엔 있었는데 UI에서 체크 해제된 것
     const toRemove = [...setFromStore].filter((id) => !setFromUI.has(id));
 
-    // 추가 반영
-    toAdd.forEach((workoutId) => {
-      toggleWorkout({ workoutId, name: "" });
+    // 추가: 확장 데이터에서 메타 추출해서 addWorkout에 전달
+    toAdd.forEach((id) => {
+      const w = workoutMap.get(id);
+      if (!w) return;
+
+      const categoryId   = String(w.workoutCategoryId ?? w.category_id ?? w.category?.id ?? "");
+      const typeId       = String(w.workoutTypeId ?? w.type_id ?? w.type?.id ?? "");
+      const targetId     = String(w.workoutTargetId ?? w.target_id ?? w.target?.id ?? "");
+
+      const categoryName = w.category?.name;
+      const typeName     = w.type?.name;
+      const targetName   = w.target?.name;
+
+      if (typeof addWorkout === "function") {
+        addWorkout({
+          workoutId: String(w.id),
+          name: w.name,
+          categoryId, categoryName,
+          typeId,     typeName,
+          // target 저장도 원하면 스토어 타입에 추가하고 주입
+          // targetId,  targetName,
+
+          // ⬇️ 타입명에서 모드 추론 → 기본 config 자동 설정(스토어가 제공)
+          // mode/config는 스토어에서 infer + default 처리하므로 여기선 생략해도 OK
+        });
+      } else if (typeof toggleWorkout === "function") {
+        toggleWorkout({ workoutId: String(w.id), name: w.name });
+      }
     });
 
     // 제거 반영
-    if (removeWorkout) {
-      toRemove.forEach((workoutId) => removeWorkout(workoutId));
-    } else {
-      // remove 액션이 없다면 토글을 한 번 더 호출해서 해제
-      toRemove.forEach((workoutId) => toggleWorkout({ workoutId }));
-    }
+    toRemove.forEach((id) => {
+      if (typeof removeWorkout === "function") removeWorkout(id);
+      else if (typeof toggleWorkout === "function") toggleWorkout({ workoutId: id });
+    });
 
     router.back();
   }
 
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 z-50">
-        <div className="absolute inset-0 bg-black/40" onClick={() => router.back()} />
-        <aside className="absolute right-0 top-0 h-full w-full max-w-md bg-white p-4 shadow-xl">
-          로딩…
-        </aside>
-      </div>
-    );
-  }
-  if (isError) {
-    return (
-      <div className="fixed inset-0 z-50">
-        <div className="absolute inset-0 bg-black/40" onClick={() => router.back()} />
-        <aside className="absolute right-0 top-0 h-full w-full max-w-md bg-white p-4 shadow-xl">
-          데이터를 불러오지 못했어요.
-          <button className="ml-2 underline" onClick={() => router.back()}>
-            닫기
-          </button>
-        </aside>
-      </div>
-    );
-  }
+  if (isLoading) return <OverlayFrame onClose={() => router.back()}>로딩…</OverlayFrame>;
+  if (isError)   return <OverlayFrame onClose={() => router.back()}>데이터를 불러오지 못했어요.</OverlayFrame>;
 
   return (
-    <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-black/40" onClick={() => router.back()} />
-      <aside className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl transform transition-transform duration-300 translate-x-0">
-        <div className="p-4 flex items-center justify-between border-b">
-          <h1 className="text-lg font-semibold">운동 선택</h1>
-          <button type="button" onClick={() => router.back()}>닫기</button>
-        </div>
+    <OverlayFrame onClose={() => router.back()}>
+      <div className="p-4 flex items-center justify-between border-b">
+        <h1 className="text-lg font-semibold">운동 선택</h1>
+        <button onClick={() => router.back()}>닫기</button>
+      </div>
 
-        <ul className="divide-y">
-          {workouts.map((w: any) => {
-            const id = String(w.id);
-            const isChecked = checked.includes(id);
-            const wasInStore = selectedIdsFromStore.includes(id);
+      <ul className="divide-y">
+        {workouts.map((w) => {
+          const id = String(w.id);
+          const isChecked = checked.includes(id);
+          const wasInStore = selectedIdsFromStore.includes(id);
 
-            return (
-              <li
-                key={id}
-                className="p-4 flex items-center justify-between cursor-pointer"
-                onClick={() => toggleLocal(id)}
-              >
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="mr-3"
-                    checked={isChecked}
-                    readOnly
-                    // ↑ li 클릭으로만 토글(이벤트 이중처리 방지)
-                  />
-                  <div>
-                    <div className="font-medium">{w.name}</div>
-                    <div className="text-sm text-gray-500">
-                      {w.workoutCategory?.name} · {w.workoutType?.name}
-                    </div>
+          return (
+            <li key={id} className="p-4 flex items-center justify-between cursor-pointer" onClick={() => toggleLocal(id)}>
+              <label className="flex items-center cursor-pointer">
+                <input type="checkbox" className="mr-3" checked={isChecked} readOnly />
+                <div>
+                  <div className="font-medium">{w.name}</div>
+                  <div className="text-sm text-gray-500">
+                    {(w.category?.name ?? "카테고리") + " · " + (w.type?.name ?? "타입")}
                   </div>
-                </label>
+                </div>
+              </label>
+              {wasInStore && <span className="text-xs rounded bg-gray-100 px-2 py-1 text-gray-600">기존선택</span>}
+            </li>
+          );
+        })}
+      </ul>
 
-                {/* UI 힌트: 기존 선택이었는지 표시(선택 유지/해제 구분 도움) */}
-                {wasInStore && (
-                  <span className="text-xs rounded bg-gray-100 px-2 py-1 text-gray-600">
-                    기존선택
-                  </span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+      <div className="p-4 flex justify-end gap-2 border-t">
+        <button onClick={() => router.back()}>취소</button>
+        <button className="bg-black text-white rounded px-3 py-2" onClick={saveSelections}>확인</button>
+      </div>
+    </OverlayFrame>
+  );
+}
 
-        <div className="p-4 flex justify-end gap-2 border-t">
-          <button type="button" onClick={() => router.back()}>
-            취소
-          </button>
-          <button
-            type="button"
-            className="bg-black text-white rounded px-3 py-2"
-            onClick={saveSelections}
-          >
-            확인
-          </button>
-        </div>
+// 오버레이 공통 프레임(재사용용)
+function OverlayFrame({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <aside className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl transform transition-transform duration-300 translate-x-0">
+        {children}
       </aside>
     </div>
   );
