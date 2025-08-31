@@ -61,6 +61,8 @@ console.log(workouts)
           name: w.name,
           categoryId, categoryName,
           typeId, typeName,
+          typeUnitPrimary: unitPrimary,
+
           // 👉 필요하면 타겟도 저장
           // targetId, targetName,
 
@@ -120,17 +122,29 @@ console.log(workouts)
             const isChecked = checked.includes(id);
             const wasInStore = selectedIdsFromStore.includes(id);
             return (
-              <li key={id} className="p-4 flex items-center justify-between cursor-pointer" onClick={() => toggleLocal(id)}>
-                <label className="flex items-center cursor-pointer">
-                  <input type="checkbox" className="mr-3" checked={isChecked} readOnly />
-                  <div>
-                    <div className="font-medium">{w.name}</div>
-                    <div className="text-sm text-gray-500">
-                      {(w.category?.name ?? "카테고리")} · {(w.type?.name ?? "타입")} · {(w.target?.name ?? "타겟")}
+              <li key={id} className="p-4 flex items-center justify-between">
+                <label htmlFor={id} className="flex w-full cursor-pointer items-center justify-between">
+                  <div className="flex items-center">
+                    <input
+                      id={id}
+                      type="checkbox"
+                      className="mr-3"
+                      checked={isChecked}
+                      onChange={() => toggleLocal(id)}
+                    />
+                    <div>
+                      <div className="font-medium">{w.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {(w.category?.name ?? "카테고리")} · {(w.type?.name ?? "타입")} · {(w.target?.name ?? "타겟")}
+                      </div>
                     </div>
                   </div>
+                  {wasInStore && (
+                    <span className="text-xs rounded bg-gray-100 px-2 py-1 text-gray-600">
+                      기존선택
+                    </span>
+                  )}
                 </label>
-                {wasInStore && <span className="text-xs rounded bg-gray-100 px-2 py-1 text-gray-600">기존선택</span>}
               </li>
             );
           })}

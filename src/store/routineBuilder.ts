@@ -72,11 +72,11 @@ function modeFromUnitPrimary(u?: WorkoutMode): WorkoutMode {
 function defaultConfigFor(mode: WorkoutMode): RoutineItem["config"] {
   switch (mode) {
     case "strength":
-      return { sets: 3, reps: 8, weight: 0, restSec: 90 };
+      return { sets: 3, reps: 10, weight: 10, restSec: 60 };
     case "repOnly":
-      return { sets: 3, reps: 12, restSec: 60 };
+      return { sets: 3, reps: 10, restSec: 60 };
     case "duration":
-      return { sets: 1, timeSec: 600, restSec: 0 }; // 10분
+      return { sets: 1, timeSec: 60, restSec: 60 }; // 10분
     default:
       return { sets: 3, reps: 10, restSec: 60 };
   }
