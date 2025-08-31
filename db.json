@@ -15,19 +15,31 @@
   "workoutCategories": [
     {
       "id": "cat1",
-      "name": "근력 운동",
+      "name": "상체 운동",
       "description": "근력 향상을 위한 운동",
       "order": 1,
       "created_at": "2025-07-19T00:00:00.000Z",
       "updated_at": "2025-07-19T00:00:00.000Z"
     },
-    { "id": "364b", "name": "test" },
-    { "id": "6bee", "name": "adsf" },
-    { "id": "2297", "name": "xzcv" },
-    { "id": "451a", "name": "vzxcv" },
-    { "id": "36f8", "name": "test2" }
+    {
+      "id": "cat2",
+      "name": "하체 운동",
+      "description": "하체 근력 향상을 위한 운동",
+      "order": 2,
+      "created_at": "2025-07-19T00:00:00.000Z",
+      "updated_at": "2025-07-19T00:00:00.000Z"
+    }
   ],
-  "workoutTargets": [{ "id": "target1", "name": "복근" }],
+  "workoutTargets": [
+    {
+      "id": "target1",
+      "name": "복근"
+    },
+    {
+      "id": "target2",
+      "name": "팔"
+    }
+  ],
   "workoutTypes": [
     {
       "id": "type1",
@@ -59,104 +71,91 @@
   ],
   "workouts": [
     {
-      "id": "w1",
+      "id": "3c77",
       "name": "푸시업",
-      "description": "가슴·삼두 운동",
+      "description": "ㄴㅇㄹ",
       "workoutCategoryId": "cat1",
       "workoutTypeId": "type1",
-      "workoutTargetId": "target1",
-      "userId": "u1",
-      "created_at": "2025-07-19T00:00:00.000Z",
-      "updated_at": "2025-07-19T00:00:00.000Z"
+      "workoutTargetId": "target1"
     },
     {
-      "id": "a5bb",
-      "name": "테스트",
-      "description": "테스트영",
+      "id": "939d",
+      "name": "ㅌㅊㅍ",
+      "description": "ㅇㄴㄹ",
       "workoutCategoryId": "cat1",
       "workoutTypeId": "type2",
-      "workoutTargetId": "target1",
-      "userId": "u1",
-      "created_at": "2025-07-19T00:00:00.000Z",
-      "updated_at": "2025-07-19T00:00:00.000Z"
-    },
-    {
-      "id": "aaa8",
-      "name": "ㄴㅁㅇㄹㅌㅊㅋ",
-      "description": "ㅍ",
-      "workoutCategoryId": "cat1",
-      "workoutTypeId": "type3",
-      "workoutTargetId": "target1",
-      "userId": "u1",
-      "created_at": "2025-07-19T00:00:00.000Z",
-      "updated_at": "2025-07-19T00:00:00.000Z"
+      "workoutTargetId": "target2"
     }
   ],
   "routines": [
     {
-      "id": "r1",
-      "name": "아침 루틴",
-      "description": "스트레칭 + 가벼운 근력",
-      "userId": "u1",
-      "is_public": true,
-      "created_at": "2025-07-19T00:00:00.000Z",
-      "updated_at": "2025-07-19T00:00:00.000Z"
+      "id": "7ea0",
+      "name": "1111",
+      "description": ""
+    },
+    {
+      "id": "4f84",
+      "name": "2222",
+      "description": ""
+    },
+    {
+      "id": "9813",
+      "name": "3333",
+      "description": ""
     }
   ],
   "routineItems": [
     {
-      "id": "ri1",
-      "routineId": "r1",
-      "workoutId": "w1",
+      "id": "9fed",
+      "routineId": "7ea0",
+      "workoutId": "3c77",
       "order": 1,
-      "set_count": 3,
-      "rep_count": 12,
-      "duration": 0,
-      "distance": 0,
-      "weight": 0,
-      "note": "",
-      "created_at": "2025-07-19T00:00:00.000Z",
-      "updated_at": "2025-07-19T00:00:00.000Z"
-    }
-  ],
-  "records": [
+      "sets": 3,
+      "reps": 10,
+      "restSec": 60
+    },
     {
-      "id": "rec1",
-      "userId": "u1",
-      "date": "2025-07-19",
-      "start_time": "08:00",
-      "end_time": "08:30",
-      "memo": "아침 운동 완료",
-      "created_at": "2025-07-19T08:30:00.000Z",
-      "updated_at": "2025-07-19T08:30:00.000Z"
-    }
-  ],
-  "recordItems": [
+      "id": "fc8d",
+      "routineId": "7ea0",
+      "workoutId": "939d",
+      "order": 2,
+      "sets": 3,
+      "reps": 10,
+      "weight": 10,
+      "restSec": 60
+    },
     {
-      "id": "rci1",
-      "recordId": "rec1",
-      "workoutId": "w1",
+      "id": "4f49",
+      "routineId": "4f84",
+      "workoutId": "3c77",
       "order": 1,
-      "set_count": 3,
-      "rep_count": 12,
-      "duration": 0,
-      "distance": 0,
-      "weight": 0,
-      "memo": "",
-      "created_at": "2025-07-19T08:30:00.000Z",
-      "updated_at": "2025-07-19T08:30:00.000Z"
-    }
-  ],
-  "favorites": [
+      "sets": 3,
+      "reps": 10,
+      "restSec": 60
+    },
     {
-      "id": "fav1",
-      "userId": "u1",
-      "workoutId": "w1",
-      "routineId": "r1",
-      "created_at": "2025-07-19T00:00:00.000Z",
-      "updated_at": "2025-07-19T00:00:00.000Z"
+      "id": "f9ee",
+      "routineId": "9813",
+      "workoutId": "939d",
+      "order": 1,
+      "sets": 3,
+      "reps": 10,
+      "weight": 10,
+      "restSec": 60
+    },
+    {
+      "id": "cdd8",
+      "routineId": "9813",
+      "workoutId": "3c77",
+      "order": 2,
+      "sets": 3,
+      "reps": 10,
+      "restSec": 60
     }
   ],
+  "records": [],
+  "recordItems": [],
+  "favorites": [],
   "user_settings": [
     {
       "id": "us1",
