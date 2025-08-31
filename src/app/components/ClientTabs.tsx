@@ -31,8 +31,11 @@ export default function ClientTabs({
   const listElements = [
     <ul key="r" className="space-y-2">
       {routines.map((r) => (
-        <li key={r.id} className="p-3 border rounded">
-          <Link href={`/routine/${r.id}`}>
+        <li
+          key={r.id}
+          className="border rounded hover:bg-gray-50 transition-colors"
+        >
+          <Link href={`/routine/${r.id}`} className="block p-3">
             <h2 className="font-semibold">{r.name}</h2>
             {r.description && (
               <p className="text-sm text-gray-600">{r.description}</p>
@@ -43,8 +46,11 @@ export default function ClientTabs({
     </ul>,
     <ul key="w" className="space-y-2">
       {workouts.map((w) => (
-        <li key={w.id} className="p-3 border rounded">
-          <Link href={`/workout/${w.id}`}>
+        <li
+          key={w.id}
+          className="border rounded hover:bg-gray-50 transition-colors"
+        >
+          <Link href={`/workout/${w.id}`} className="block p-3">
             <h2 className="font-semibold">{w.name}</h2>
             {w.description && (
               <p className="text-sm text-gray-600">{w.description}</p>
