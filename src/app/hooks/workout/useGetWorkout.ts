@@ -1,13 +1,19 @@
-// src/app/hooks/workout/useGetWorkout.ts
+"use client";
+
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 
-type WorkoutBase = {
+type Workout = {
   id: string;
   name: string;
+  description?: string;
   workoutCategoryId?: string;
   workoutTypeId?: string;
   workoutTargetId?: string;
+  // These will be populated by the dependent SWR hooks
+  workoutCategory: Meta;
+  workoutType: Meta;
+  workoutTarget: Meta;
 };
 
 type Meta = { id: string; name: string };
@@ -15,40 +21,34 @@ type Meta = { id: string; name: string };
 export function useGetWorkout(id: string | null | undefined) {
   const shouldFetch = typeof id === "string" && id.length > 0;
 
-  // 1) 기본 엔티티 (단건)
-  const { data: base, error: baseErr, isLoading: baseLoading } = useSWR<WorkoutBase>(
+  // 1) Fetch the base workout entity
+  const { data: baseWorkout, error: baseError, isLoading: baseIsLoading } = useSWR<Omit<Workout, 'workoutCategory' | 'workoutType' | 'workoutTarget'>>(
     shouldFetch ? `/workouts/${encodeURIComponent(id!)}` : null,
     fetcher,
     { revalidateOnFocus: false, revalidateOnReconnect: false }
   );
 
-  // 2) 관계(의존형) — base가 로드된 후에만 각각 호출
-  const { data: cat }   = useSWR<Meta>(
-    base?.workoutCategoryId ? `/workoutCategories/${encodeURIComponent(base.workoutCategoryId)}` : null,
+  // 2) Fetch related entities once the base workout is loaded
+  const { data: category, error: categoryError, isLoading: categoryIsLoading } = useSWR<Meta>(
+    baseWorkout?.workoutCategoryId ? `/workoutCategories/${encodeURIComponent(baseWorkout.workoutCategoryId)}` : null,
     fetcher
   );
-  const { data: type }  = useSWR<Meta>(
-    base?.workoutTypeId ? `/workoutTypes/${encodeURIComponent(base.workoutTypeId)}` : null,
+  const { data: type, error: typeError, isLoading: typeIsLoading } = useSWR<Meta>(
+    baseWorkout?.workoutTypeId ? `/workoutTypes/${encodeURIComponent(baseWorkout.workoutTypeId)}` : null,
     fetcher
   );
-  const { data: target }= useSWR<Meta>(
-    base?.workoutTargetId ? `/workoutTargets/${encodeURIComponent(base.workoutTargetId)}` : null,
+  const { data: target, error: targetError, isLoading: targetIsLoading } = useSWR<Meta>(
+    baseWorkout?.workoutTargetId ? `/workoutTargets/${encodeURIComponent(baseWorkout.workoutTargetId)}` : null,
     fetcher
   );
 
-  // 3) 합치기
-  const workout = base
-    ? {
-        ...base,
-        workoutCategory: cat ?? null,
-        workoutType: type ?? null,
-        workoutTarget: target ?? null,
-      }
-    : null;
+  const isLoading = baseIsLoading || categoryIsLoading || typeIsLoading || targetIsLoading;
+  const isError = baseError || categoryError || typeError || targetError;
 
   return {
-    workout,
-    isLoading: baseLoading,
-    isError: !!baseErr, // 네트워크/서버 에러만 에러로 처리
+    workout: baseWorkout && category && type && target ? { ...baseWorkout, workoutCategory: category, workoutType: type, workoutTarget: target } : undefined,
+    isLoading,
+    isError: !!isError,
   };
 }
+
