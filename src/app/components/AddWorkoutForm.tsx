@@ -1,106 +1,106 @@
 // src/components/AddWorkoutForm.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetcher, API_BASE } from "@/lib/fetcher";
-type WorkoutCategory = {
-  id: string;
-  name: string;
-};
-type WorkoutType = {
+import { useGetWorkoutCategories } from "@/app/hooks/workout/useGetWorkoutCategories";
+import { useGetWorkoutTypes } from "@/app/hooks/workout/useGetWorkoutTypes";
+import { useGetWorkoutTargets } from "@/app/hooks/workout/useGetWorkoutTargets";
+import useSWRMutation from "swr/mutation";
+import { poster } from "@/lib/fetcher";
+import { useSWRConfig } from "swr";
+
+type WorkoutMeta = {
   id: string;
   name: string;
 };
 
 export default function AddWorkoutForm() {
   const router = useRouter();
+  const { mutate } = useSWRConfig();
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [workoutCategoryId, setWorkoutCategoryId] = useState("");
+  const [workoutTypeId, setWorkoutTypeId] = useState("");
+  const [workoutTargetId, setWorkoutTargetId] = useState("");
 
-  const [categoryId, setCategoryId] = useState("");
-  const [categories, setCategories] = useState<WorkoutCategory[]>([]);
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [newCategory, setNewCategory] = useState("");
 
-  const [typeId, setTypeId] = useState("");
-  const [types, setTypes] = useState<WorkoutType[]>([]);
+  // Data fetching with SWR
+  const { categories, isLoading: categoriesLoading } =
+    useGetWorkoutCategories();
+  const { types, isLoading: typesLoading } = useGetWorkoutTypes();
+  const { targets, isLoading: targetsLoading } = useGetWorkoutTargets();
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // 카테고리 목록 가져오기
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/workoutCategories`);
-        const data = await res.json();
-        setCategories(data);
-      } catch (error) {
-        console.error("카테고리 로딩 실패", error);
-      }
-    };
-    const loadTypes = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/workoutTypes`);
-        const data = await res.json();
-        setTypes(data);
-      } catch (error) {
-        console.error("운동 타입 로딩 실패", error);
-      }
-    };
-    loadCategories();
-    loadTypes();
-  }, []);
+  // Mutation with SWR
+  const {
+    trigger: createWorkout,
+    isMutating: isCreating,
+    error: createError,
+  } = useSWRMutation("/workouts", poster);
 
   // 새 카테고리 추가
   const handleAddCategory = async () => {
-    if (!newCategory.trim()) return; // 새카테고리 비어있을 시
+    if (!newCategory.trim()) return;
     try {
-      const res = await fetch(`${API_BASE}/workoutCategories`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newCategory }),
+      const createdCategory = await poster("/workoutCategories", {
+        arg: { name: newCategory },
       });
-      if (res.ok) {
-        const data = await res.json();
-        setCategories((prev) => [...prev, data]);
-        setNewCategory("");
-        setShowNewCategoryInput(false);
-      }
+      // Revalidate the categories list and select the new one
+      mutate("/workoutCategories");
+      setWorkoutCategoryId(createdCategory.id);
+      setNewCategory("");
+      setShowNewCategoryInput(false);
     } catch (error) {
       console.error("카테고리 추가 실패", error);
+      alert("카테고리 추가에 실패했습니다.");
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      return setError("이름을 입력해주세요.");
+      alert("이름을 입력해주세요.");
+      return;
     }
-    if (!categoryId) return setError("카테고리를 선택해주세요");
-    if (!typeId) return setError("운동 타입을 선택해주세요");
+    if (!workoutCategoryId) {
+      alert("카테고리를 선택해주세요");
+      return;
+    }
+    if (!workoutTypeId) {
+      alert("운동 타입을 선택해주세요");
+      return;
+    }
+    if (!workoutTargetId) {
+      alert("주요 타겟을 선택해주세요");
+      return;
+    }
 
-    setLoading(true);
-    setError(null);
-    try {
-      await fetch(`${API_BASE}/workouts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description, categoryId, typeId }),
-      });
-      // 추가 후 메인으로 돌아가기
-      router.push("/");
-    } catch (err: any) {
-      setError(err.message || "추가 중 오류가 발생했습니다.");
-    } finally {
-      setLoading(false);
-    }
+    const payload = {
+      name,
+      description,
+      workoutCategoryId,
+      workoutTypeId,
+      workoutTargetId,
+    };
+
+    await createWorkout(payload, {
+      onSuccess: () => {
+        router.push("/");
+        router.refresh(); // To show the new item in the list
+      },
+    });
   };
+
+  const isLoading = categoriesLoading || typesLoading || targetsLoading;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {error && <p className="text-red-500">{error}</p>}
+      {createError && (
+        <p className="text-red-500">{(createError as Error).message}</p>
+      )}
 
       <div>
         <label className="block mb-1 font-medium">운동 이름</label>
@@ -110,7 +110,7 @@ export default function AddWorkoutForm() {
           onChange={(e) => setName(e.target.value)}
           className="w-full border p-2 rounded"
           placeholder="예: 푸시업"
-          disabled={loading}
+          disabled={isCreating}
         />
       </div>
 
@@ -121,19 +121,19 @@ export default function AddWorkoutForm() {
           onChange={(e) => setDescription(e.target.value)}
           className="w-full border p-2 rounded"
           placeholder="간단한 설명을 입력하세요"
-          disabled={loading}
+          disabled={isCreating}
         />
       </div>
       <div>
         <label className="block mb-1 font-medium">카테고리</label>
         <select
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
+          value={workoutCategoryId}
+          onChange={(e) => setWorkoutCategoryId(e.target.value)}
           className="w-full border p-2 rounded"
-          disabled={loading}
+          disabled={isLoading || isCreating}
         >
           <option value="">카테고리를 선택하세요</option>
-          {categories.map((cat) => (
+          {categories?.map((cat: WorkoutMeta) => (
             <option key={cat.id} value={cat.id}>
               {cat.name}
             </option>
@@ -177,12 +177,13 @@ export default function AddWorkoutForm() {
       <div>
         <label className="block mb-1 font-medium">운동 타입</label>
         <select
-          value={typeId}
-          onChange={(e) => setTypeId(e.target.value)}
+          value={workoutTypeId}
+          onChange={(e) => setWorkoutTypeId(e.target.value)}
           className="w-full border p-2 rounded"
-          disabled={loading}
+          disabled={isLoading || isCreating}
         >
-          {types.map((type) => (
+          <option value="">운동 타입을 선택하세요</option>
+          {types?.map((type: WorkoutMeta) => (
             <option key={type.id} value={type.id}>
               {type.name}
             </option>
@@ -190,12 +191,29 @@ export default function AddWorkoutForm() {
         </select>
       </div>
 
+      <div>
+        <label className="block mb-1 font-medium">주요 타겟</label>
+        <select
+          value={workoutTargetId}
+          onChange={(e) => setWorkoutTargetId(e.target.value)}
+          className="w-full border p-2 rounded"
+          disabled={isLoading || isCreating}
+        >
+          <option value="">주요 타겟을 선택하세요</option>
+          {targets?.map((target: WorkoutMeta) => (
+            <option key={target.id} value={target.id}>
+              {target.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <button
         type="submit"
-        disabled={loading}
+        disabled={isCreating || isLoading}
         className="w-full bg-blue-500 text-white p-2 rounded disabled:opacity-50"
       >
-        {loading ? "추가 중…" : "운동 추가"}
+        {isCreating ? "추가 중…" : "운동 추가"}
       </button>
     </form>
   );
