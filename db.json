@@ -89,11 +89,6 @@
   ],
   "routines": [
     {
-      "id": "7ea0",
-      "name": "1111",
-      "description": ""
-    },
-    {
       "id": "4f84",
       "name": "2222",
       "description": ""
@@ -107,22 +102,22 @@
   "routineItems": [
     {
       "id": "9fed",
-      "routineId": "7ea0",
+      "routineId": null,
       "workoutId": "3c77",
-      "order": 1,
-      "sets": 3,
-      "reps": 10,
-      "restSec": 60
+      "order": 2,
+      "sets": 2,
+      "reps": 15,
+      "restSec": 30
     },
     {
       "id": "fc8d",
-      "routineId": "7ea0",
+      "routineId": null,
       "workoutId": "939d",
-      "order": 2,
+      "order": 1,
       "sets": 3,
-      "reps": 10,
-      "weight": 10,
-      "restSec": 60
+      "reps": 5,
+      "weight": 20,
+      "restSec": 30
     },
     {
       "id": "4f49",
