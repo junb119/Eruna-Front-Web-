@@ -10,6 +10,14 @@ import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSWRConfig } from "swr";
 
+/**
+ * @description 운동 상세 페이지에서 사용되는 폼 데이터의 타입 정의.
+ * @property {string} name - 운동 이름.
+ * @property {string} description - 운동 설명.
+ * @property {string} workoutCategoryId - 운동 카테고리 ID.
+ * @property {string} workoutTypeId - 운동 종류 ID.
+ * @property {string} workoutTargetId - 운동 목표 부위 ID.
+ */
 type FormData = {
   name: string;
   description: string;
@@ -18,27 +26,51 @@ type FormData = {
   workoutTargetId: string;
 };
 
+/**
+ * @description 운동 상세 페이지 컴포넌트.
+ *              특정 운동의 상세 정보를 표시하고, 운동 이름/설명, 카테고리, 종류, 목표 부위 등을 편집하며,
+ *              운동 삭제 기능을 제공합니다.
+ *              Next.js의 Dynamic Route ([id])를 통해 운동 ID를 받아옵니다.
+ */
 const WorkoutDetail = () => {
+  // --- Hooks ---
   const { id } = useParams();
   const router = useRouter();
-  const { mutate } = useSWRConfig();
+  const { mutate } = useSWRConfig(); // SWR 캐시를 수동으로 조작하기 위한 mutate 함수
 
+  // --- State ---
+  /** @description 삭제 확인 모달 표시 상태 */
   const [showConfirm, setShowConfirm] = useState(false);
-  // 어떤 필드를 편집 중인지 추적하는 상태 ('name', 'description', 'category' 등)
+  /** @description 어떤 필드를 편집 중인지 추적하는 상태 ('name', 'description', 'category' 등) */
   const [editingField, setEditingField] = useState<string | null>(null);
-  // 어떤 필드가 현재 서버와 통신 중인지 추적하는 상태
+  /** @description 어떤 필드가 현재 서버와 통신 중인지 추적하는 상태 (업데이트 중 UI 피드백용) */
   const [updatingField, setUpdatingField] = useState<string | null>(null);
 
+  /** @description 현재 페이지의 운동 ID. `useParams`에서 가져온 ID를 문자열로 변환합니다. */
   const workoutId = typeof id === "string" ? id : null;
 
+  // --- Data Fetching ---
+  /** @description 운동 상세 정보를 가져오는 SWR 훅. */
   const { workout, isLoading, isError } = useGetWorkout(workoutId);
+  /** @description 운동 삭제를 위한 SWR Mutation 훅. */
   const { deleteWorkout, isDeleting } = useDeleteWorkout(workoutId);
+  /** @description 운동 업데이트를 위한 SWR Mutation 훅. */
   const { updateWorkout, isUpdating } = useUpdateWorkout(workoutId);
+  /** @description 모든 운동 카테고리 목록을 가져오는 SWR 훅. */
   const { categories, isLoading: categoriesLoading } =
     useGetWorkoutCategories();
+  /** @description 모든 운동 종류 목록을 가져오는 SWR 훅. */
   const { types, isLoading: typesLoading } = useGetWorkoutTypes();
+  /** @description 모든 운동 목표 부위 목록을 가져오는 SWR 훅. */
   const { targets, isLoading: targetsLoading } = useGetWorkoutTargets();
 
+  // --- Handlers ---
+  /**
+   * @description 운동 필드 업데이트를 처리하는 콜백 함수.
+   *              SWR의 낙관적 업데이트를 사용하여 UI를 즉시 반영하고, 백그라운드에서 API 요청을 보냅니다.
+   * @param {keyof FormData} field - 업데이트할 필드의 이름 (예: 'name', 'workoutCategoryId').
+   * @param {string} value - 업데이트할 새로운 값.
+   */
   const handleUpdate = useCallback(
     async (field: keyof FormData, value: string) => {
       if (!workoutId || !workout) return;
@@ -49,9 +81,10 @@ const WorkoutDetail = () => {
         return; // 변경 사항이 없으면 아무것도 하지 않음
       }
 
-      setUpdatingField(field);
-      setEditingField(null);
+      setUpdatingField(field); // 특정 필드가 업데이트 중임을 표시
+      setEditingField(null); // 편집 모드 종료
 
+      // SWR 캐시 키 (useGetWorkout 훅에서 사용하는 키와 동일하게 설정)
       const key = `/workouts/${workoutId}?_expand=workoutCategory&_expand=workoutType&_expand=workoutTarget`;
 
       // API 요청을 위한 페이로드 (확장된 객체 제거)
@@ -60,7 +93,7 @@ const WorkoutDetail = () => {
       delete (apiPayload as any).workoutType;
       delete (apiPayload as any).workoutTarget;
 
-      // UI 즉시 업데이트를 위한 낙관적 데이터
+      // UI 즉시 업데이트를 위한 낙관적 데이터 (관련 메타 정보도 업데이트)
       let optimisticData = { ...workout, [field]: value };
       if (field === "workoutCategoryId" && categories) {
         optimisticData.workoutCategory = categories.find(
@@ -76,40 +109,41 @@ const WorkoutDetail = () => {
 
       try {
         await updateWorkout(apiPayload, {
-          optimisticData,
-          revalidate: false,
-          populateCache: true,
-          rollbackOnError: true,
+          optimisticData, // 낙관적 업데이트 데이터
+          revalidate: false, // 업데이트 후 자동으로 재검증하지 않음 (수동으로 mutate 호출 가능)
+          populateCache: true, // 캐시를 낙관적 데이터로 채움
+          rollbackOnError: true, // 에러 발생 시 캐시를 이전 상태로 롤백
         });
       } catch (error) {
         console.error(`Failed to update ${field}:`, error);
-        // 실패 시 에러 메시지 표시 (예: 토스트)
         alert(`${field} 업데이트에 실패했습니다.`);
         // SWR이 자동으로 롤백하지만, 수동으로 mutate를 호출하여 강제로 되돌릴 수도 있습니다.
         mutate(key);
       } finally {
-        setUpdatingField(null);
+        setUpdatingField(null); // 업데이트 완료
       }
     },
     [workout, workoutId, categories, types, targets, updateWorkout, mutate]
   );
 
+  /** @description 운동 삭제를 처리하는 콜백 함수. */
   const handleDelete = async () => {
     if (!workoutId) return;
     try {
       // revalidate: false 옵션으로 불필요한 데이터 갱신을 막습니다.
       await deleteWorkout(undefined, { revalidate: false });
-      router.push("/");
+      router.push("/"); // 삭제 성공 시 메인 페이지로 이동
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
         console.error("Failed to delete workout:", error);
       }
       alert("운동 삭제에 실패했습니다. 다시 시도해주세요.");
-      setShowConfirm(false);
+      setShowConfirm(false); // 모달 닫기
     }
   };
 
-  // ESC 키를 누르면 수정 모드 종료
+  // --- Effects ---
+  /** @description ESC 키를 누르면 현재 편집 중인 필드의 편집 모드를 종료합니다. */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -120,7 +154,10 @@ const WorkoutDetail = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // --- Render Logic ---
+  /** @description 현재 컴포넌트에서 진행 중인 모든 처리 상태 (삭제, 필드 업데이트)를 통합합니다. */
   const isProcessing = isDeleting || !!updatingField;
+  /** @description 카테고리, 종류, 목표 부위 목록 데이터 로딩 상태를 통합합니다. */
   const isListLoading = categoriesLoading || typesLoading || targetsLoading;
 
   if (isLoading || isListLoading) return <p>loading</p>;
