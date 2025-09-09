@@ -3,7 +3,7 @@
 
 import { poster } from "@/lib/fetcher";
 import { useCreateRoutine } from "@/app/hooks/routine/useCreateRoutine";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRoutineBuilder } from "@/store/routineBuilder";
 import { useRouter } from "next/navigation";
 
@@ -171,6 +171,12 @@ const AddRoutineForm = () => {
   /** @description 루틴 빌더 스토어에서 루틴 이름, 아이템 목록, 초기화, 아이템 설정 업데이트 함수를 가져옵니다. */
   const { name, setName, items, clearRoutine, updateItemConfig } =
     useRoutineBuilder();
+
+  // 새 루틴 생성 진입 시, 이전 선택/설정이 남지 않도록 초기화
+  useEffect(() => {
+    clearRoutine();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   /** @description 루틴 생성 API 호출을 위한 훅입니다. */
   const { createRoutine, isCreating, createError } = useCreateRoutine();
 
@@ -219,7 +225,8 @@ const AddRoutineForm = () => {
 
       // 2. 생성된 루틴 ID를 사용하여 각 운동 아이템을 서버에 추가합니다.
       // json-server의 동시 쓰기 문제를 피하기 위해 Promise.all 대신 순차적으로 요청합니다.
-      for (const [index, item] of items.entries()) {
+      const uniqueItems = Array.from(new Map(items.map(i => [i.workoutId, i])).values());
+      for (const [index, item] of uniqueItems.entries()) {
         const routineItemPayload = {
           routineId: newRoutine.id,
           workoutId: item.workoutId,

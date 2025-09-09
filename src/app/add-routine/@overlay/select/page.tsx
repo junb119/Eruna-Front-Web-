@@ -1,4 +1,4 @@
-// app/add-routine/@overlay/select/page.tsx (또는 SelectWorkoutOverlay.tsx)
+// app/add-routine/@overlay/select/page.tsx (SelectWorkoutOverlay)
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -9,24 +9,22 @@ import { useGetWorkoutListJoined } from "@/app/hooks/workout/useGetWorkoutListJo
 export default function SelectWorkoutOverlay() {
   const router = useRouter();
   const { workouts = [], isLoading, isError } = useGetWorkoutListJoined();
-console.log(workouts)
-  // 스토어
   const { items, addWorkout, removeWorkout, toggleWorkout } = useRoutineBuilder() as any;
 
-  // 스토어에 이미 선택된 id들
+  // store에 이미 선택되어 있는 id 목록을 파생
   const selectedIdsFromStore = useMemo(
     () => items.map((it: any) => String(it.workoutId)),
     [items]
   );
 
-  // 로컬 체크박스 상태(저장 전까지 스토어 변화 X)
+  // 로컬 체크박스 상태 (저장 전까지 store 변경 없음)
   const [checked, setChecked] = useState<string[]>([]);
   useEffect(() => { setChecked(selectedIdsFromStore); }, [selectedIdsFromStore]);
 
   const toggleLocal = (id: string) =>
     setChecked(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
 
-  // id -> 조인된 workout 빠르게 찾게 맵 구성
+  // id -> workout 조인 데이터 빠르게 찾을 수 있게 구성
   const joinedMap = useMemo(() => {
     const m = new Map<string, any>();
     workouts.forEach((w) => m.set(String(w.id), w));
@@ -45,16 +43,14 @@ console.log(workouts)
       const w = joinedMap.get(id);
       if (!w) return;
 
-      // 조인된 객체에서 필요한 메타 추출
       const categoryId   = w.workoutCategoryId;
       const categoryName = w.category?.name;
       const typeId       = w.workoutTypeId;
       const typeName     = w.type?.name;
-      const unitPrimary  = w.type?.unit_primary; // "repOnly" | "strength" | "duration" | undefined
-      const targetId     = w.workoutTargetId;
-      const targetName   = w.target?.name;
+      const unitPrimary  = w.type?.unit_primary as ("repOnly" | "strength" | "duration" | undefined);
+      // const targetId     = w.workoutTargetId;
+      // const targetName   = w.target?.name;
 
-      // 스토어로 전달 (현재 스토어 시그니처에 맞게)
       if (typeof addWorkout === "function") {
         addWorkout({
           workoutId: String(w.id),
@@ -62,15 +58,6 @@ console.log(workouts)
           categoryId, categoryName,
           typeId, typeName,
           typeUnitPrimary: unitPrimary,
-
-          // 👉 필요하면 타겟도 저장
-          // targetId, targetName,
-
-          // (선택) 타입 기반 초기 mode/config 힌트
-          // unit_primary를 store 내부에서 mode로 매핑해도 되고,
-          // 여기서 직접 mode로 바꿔 넘겨도 됨.
-          // mode: unitPrimary, // ← store에서 매핑한다면 그대로 넘기고,
-          // config: { ... }    // 초깃값도 원하는 대로 지정 가능
         });
       } else if (typeof toggleWorkout === "function") {
         toggleWorkout({ workoutId: String(w.id), name: w.name });
@@ -90,7 +77,7 @@ console.log(workouts)
     return (
       <div className="fixed inset-0 z-50">
         <div className="absolute inset-0 bg-black/40" onClick={() => router.back()} />
-        <aside className="absolute right-0 top-0 h-full w-full max-w-md bg-white p-4 shadow-xl">로딩…</aside>
+        <aside className="absolute right-0 top-0 h-full w-full max-w-md bg-white p-4 shadow-xl">로딩중</aside>
       </div>
     );
   }
@@ -135,7 +122,7 @@ console.log(workouts)
                     <div>
                       <div className="font-medium">{w.name}</div>
                       <div className="text-sm text-gray-500">
-                        {(w.category?.name ?? "카테고리")} · {(w.type?.name ?? "타입")} · {(w.target?.name ?? "타겟")}
+                        {(w.category?.name ?? "카테고리")} · {(w.type?.name ?? "종류")} · {(w.target?.name ?? "부위")}
                       </div>
                     </div>
                   </div>

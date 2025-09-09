@@ -18,11 +18,11 @@ const AddWorkoutForm = () => {
   // --- Hooks ---
   const router = useRouter();
   /** @description 운동 카테고리 목록을 가져오는 훅입니다. */
-  const { workoutCategories, isLoading: isLoadingCategories } = useGetWorkoutCategories();
+  const { categories, isLoading: isLoadingCategories } = useGetWorkoutCategories();
   /** @description 운동 종류 목록을 가져오는 훅입니다. */
-  const { workoutTypes, isLoading: isLoadingTypes } = useGetWorkoutTypes();
+  const { types, isLoading: isLoadingTypes } = useGetWorkoutTypes();
   /** @description 운동 타겟 부위 목록을 가져오는 훅입니다. */
-  const { workoutTargets, isLoading: isLoadingTargets } = useGetWorkoutTargets();
+  const { targets, isLoading: isLoadingTargets } = useGetWorkoutTargets();
 
   // --- State ---
   /** @description 운동 이름을 관리하는 상태입니다. */
@@ -43,24 +43,24 @@ const AddWorkoutForm = () => {
   // --- Effects ---
   /** @description 운동 카테고리 데이터가 로드되면 첫 번째 카테고리를 기본값으로 설정합니다. */
   useEffect(() => {
-    if (workoutCategories && workoutCategories.length > 0 && !selectedCategory) {
-      setSelectedCategory(workoutCategories[0].id);
+    if (categories && categories.length > 0 && !selectedCategory) {
+      setSelectedCategory(categories[0].id);
     }
-  }, [workoutCategories, selectedCategory]);
+  }, [categories, selectedCategory]);
 
   /** @description 운동 종류 데이터가 로드되면 첫 번째 종류를 기본값으로 설정합니다. */
   useEffect(() => {
-    if (workoutTypes && workoutTypes.length > 0 && !selectedType) {
-      setSelectedType(workoutTypes[0].id);
+    if (types && types.length > 0 && !selectedType) {
+      setSelectedType(types[0].id);
     }
-  }, [workoutTypes, selectedType]);
+  }, [types, selectedType]);
 
   /** @description 운동 타겟 데이터가 로드되면 첫 번째 타겟을 기본값으로 설정합니다. */
   useEffect(() => {
-    if (workoutTargets && workoutTargets.length > 0 && !selectedTarget) {
-      setSelectedTarget(workoutTargets[0].id);
+    if (targets && targets.length > 0 && !selectedTarget) {
+      setSelectedTarget(targets[0].id);
     }
-  }, [workoutTargets, selectedTarget]);
+  }, [targets, selectedTarget]);
 
   // --- Handlers ---
   /** 
@@ -102,7 +102,7 @@ const AddWorkoutForm = () => {
           workoutTargetId: selectedTarget,
         },
       });
-      router.push("/workouts"); // 성공 시 운동 목록 페이지로 이동
+      router.push("/"); // 성공 시 운동 목록 페이지로 이동
     } catch (err: any) {
       // 오류 발생 시 오류 메시지 설정
       setSubmitError(err.message || "운동 저장 중 오류가 발생했습니다.");
@@ -163,7 +163,7 @@ const AddWorkoutForm = () => {
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             disabled={isProcessing}
           >
-            {workoutCategories?.map((category) => (
+            {categories?.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -181,7 +181,7 @@ const AddWorkoutForm = () => {
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             disabled={isProcessing}
           >
-            {workoutTypes?.map((type) => (
+            {types?.map((type) => (
               <option key={type.id} value={type.id}>
                 {type.name}
               </option>
@@ -199,7 +199,7 @@ const AddWorkoutForm = () => {
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             disabled={isProcessing}
           >
-            {workoutTargets?.map((target) => (
+            {targets?.map((target) => (
               <option key={target.id} value={target.id}>
                 {target.name}
               </option>

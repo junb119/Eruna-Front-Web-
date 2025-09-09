@@ -118,6 +118,9 @@ export const useGetRoutineItems = (routineId: string | null | undefined) => {
     if (!routineItemsData || !workoutsData || !workoutTypesData) {
       return [];
     }
+    const filteredItems = (routineItemsData as any[]).filter(
+      (it) => it && String((it as any).routineId) === String(routineId)
+    );
 
     // 운동 ID를 키로 하는 맵을 생성하여 빠른 조회를 가능하게 합니다.
     const workoutsMap = new Map(workoutsData.map(w => [w.id, w]));
@@ -125,7 +128,7 @@ export const useGetRoutineItems = (routineId: string | null | undefined) => {
     const workoutTypesMap = new Map(workoutTypesData.map(wt => [wt.id, wt]));
 
     // 각 루틴 아이템에 해당하는 운동 및 운동 종류 정보를 조인합니다.
-    return routineItemsData.map(item => {
+    return filteredItems.map(item => {
       const workout = workoutsMap.get(item.workoutId);
       // 운동 정보를 찾지 못했다면 `workout`을 undefined로 설정하고 반환합니다.
       if (!workout) return { ...item, workout: undefined };

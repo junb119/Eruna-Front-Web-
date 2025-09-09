@@ -1,7 +1,7 @@
 // src/app/components/ClientTabs.tsx
 "use client";
 
-import { useState, ReactNode, Children } from "react";
+import { useState, ReactNode, Children, useMemo } from "react";
 import Link from "next/link";
 import Menu from "./Menu";
 import { useSidebarStore } from "@/store/useSidebarStore";

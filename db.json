@@ -74,9 +74,9 @@
       "id": "3c77",
       "name": "푸시업",
       "description": "ㄴㅇㄹ",
-      "workoutCategoryId": "cat1",
-      "workoutTypeId": "type1",
-      "workoutTargetId": "target1"
+      "workoutCategoryId": "cat2",
+      "workoutTypeId": "type3",
+      "workoutTargetId": "target2"
     },
     {
       "id": "939d",
@@ -85,52 +85,63 @@
       "workoutCategoryId": "cat1",
       "workoutTypeId": "type2",
       "workoutTargetId": "target2"
+    },
+    {
+      "id": "2aaa",
+      "name": "횟수1",
+      "description": "1",
+      "workoutCategoryId": "cat1",
+      "workoutTypeId": "type1",
+      "workoutTargetId": "target1"
+    },
+    {
+      "id": "c7b8",
+      "name": "무게1",
+      "description": "1",
+      "workoutCategoryId": "cat2",
+      "workoutTypeId": "type2",
+      "workoutTargetId": "target2"
+    },
+    {
+      "id": "bbed",
+      "name": "상체타이머복근",
+      "description": "",
+      "workoutCategoryId": "cat1",
+      "workoutTypeId": "type3",
+      "workoutTargetId": "target1"
     }
   ],
   "routines": [
     {
-      "id": "4f84",
+      "id": "cb49",
+      "name": "1111",
+      "description": ""
+    },
+    {
+      "id": "4df3",
       "name": "2222",
       "description": ""
     },
     {
-      "id": "9813",
+      "id": "5164",
       "name": "3333",
       "description": ""
     }
   ],
   "routineItems": [
     {
-      "id": "9fed",
-      "routineId": null,
-      "workoutId": "3c77",
-      "order": 2,
-      "sets": 2,
-      "reps": 15,
-      "restSec": 30
-    },
-    {
-      "id": "fc8d",
-      "routineId": null,
-      "workoutId": "939d",
-      "order": 1,
-      "sets": 3,
-      "reps": 5,
-      "weight": 20,
-      "restSec": 30
-    },
-    {
-      "id": "4f49",
-      "routineId": "4f84",
+      "id": "3b7c",
+      "routineId": "cb49",
       "workoutId": "3c77",
       "order": 1,
       "sets": 3,
       "reps": 10,
+      "weight": 10,
       "restSec": 60
     },
     {
-      "id": "f9ee",
-      "routineId": "9813",
+      "id": "9dd5",
+      "routineId": "4df3",
       "workoutId": "939d",
       "order": 1,
       "sets": 3,
@@ -139,17 +150,115 @@
       "restSec": 60
     },
     {
-      "id": "cdd8",
-      "routineId": "9813",
+      "id": "4456",
+      "routineId": "5164",
       "workoutId": "3c77",
+      "order": 1,
+      "sets": 1,
+      "timeSec": 60,
+      "restSec": 60
+    },
+    {
+      "id": "b0fe",
+      "routineId": "5164",
+      "workoutId": "2aaa",
       "order": 2,
       "sets": 3,
       "reps": 10,
       "restSec": 60
+    },
+    {
+      "id": "dfba",
+      "routineId": "5164",
+      "workoutId": "c7b8",
+      "order": 3,
+      "sets": 3,
+      "reps": 10,
+      "weight": 10,
+      "restSec": 60
+    },
+    {
+      "id": "04db",
+      "routineId": "5164",
+      "workoutId": "bbed",
+      "order": 4,
+      "sets": 1,
+      "timeSec": 60,
+      "restSec": 60
+    },
+    {
+      "id": "66c2",
+      "routineId": "5164",
+      "workoutId": "939d",
+      "order": 5,
+      "sets": 3,
+      "reps": 10,
+      "weight": 10,
+      "restSec": 60
     }
   ],
-  "records": [],
-  "recordItems": [],
+  "records": [
+    {
+      "id": "29de",
+      "routineId": "cb49",
+      "startAt": "2025-09-06T05:14:48.569Z",
+      "endAt": "2025-09-06T05:15:08.161Z",
+      "status": "completed"
+    },
+    {
+      "id": "7de3",
+      "routineId": "cb49",
+      "startAt": "2025-09-06T08:17:43.006Z",
+      "endAt": "2025-09-06T08:18:23.653Z",
+      "status": "completed"
+    }
+  ],
+  "recordItems": [
+    {
+      "id": "7c6e",
+      "recordId": "29de",
+      "routineItemId": "3b7c",
+      "setIndex": 0,
+      "skipped": true
+    },
+    {
+      "id": "d096",
+      "recordId": "29de",
+      "routineItemId": "3b7c",
+      "setIndex": 1,
+      "skipped": true
+    },
+    {
+      "id": "6246",
+      "recordId": "29de",
+      "routineItemId": "3b7c",
+      "setIndex": 2,
+      "reps": 10,
+      "weight": 10,
+      "restSec": 60,
+      "skipped": false
+    },
+    {
+      "id": "464d",
+      "recordId": "7de3",
+      "routineItemId": "3b7c",
+      "setIndex": 0,
+      "reps": 10,
+      "weight": 20,
+      "restSec": 60,
+      "skipped": false
+    },
+    {
+      "id": "08cc",
+      "recordId": "7de3",
+      "routineItemId": "3b7c",
+      "setIndex": 1,
+      "reps": 10,
+      "weight": 10,
+      "restSec": 60,
+      "skipped": false
+    }
+  ],
   "favorites": [],
   "user_settings": [
     {
