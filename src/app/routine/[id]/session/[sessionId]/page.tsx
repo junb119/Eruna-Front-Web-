@@ -34,7 +34,7 @@ export default function RoutineSessionPage() {
 
     // 루틴 정보를 바탕으로 세션의 각 단계(steps)를 구성합니다.
     const steps: LocalStep[] = routineItems
-      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) // 루틴에 설정된 순서대로 정렬
+      .sort((a, b) => (b.order ?? 0) - (a.order ?? 0)) // 루틴에 설정된 순서대로 정렬
       .map((it) => ({
         routineItemId: it.id,
         workoutId: it.workoutId,
@@ -187,6 +187,7 @@ export default function RoutineSessionPage() {
                       onChange={(e) => updateDraft(session.id, idx, { timeSec: e.target.value === "" ? undefined : Number(e.target.value) })}
                     />
                   </label>
+                  <button className="border">운동 완료</button>
                 </div>
               </div>
             );

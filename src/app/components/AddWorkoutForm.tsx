@@ -18,7 +18,8 @@ const AddWorkoutForm = () => {
   // --- Hooks ---
   const router = useRouter();
   /** @description 운동 카테고리 목록을 가져오는 훅입니다. */
-  const { categories, isLoading: isLoadingCategories } = useGetWorkoutCategories();
+  const { categories, isLoading: isLoadingCategories } =
+    useGetWorkoutCategories();
   /** @description 운동 종류 목록을 가져오는 훅입니다. */
   const { types, isLoading: isLoadingTypes } = useGetWorkoutTypes();
   /** @description 운동 타겟 부위 목록을 가져오는 훅입니다. */
@@ -63,8 +64,8 @@ const AddWorkoutForm = () => {
   }, [targets, selectedTarget]);
 
   // --- Handlers ---
-  /** 
-   * @description 폼 제출 시 호출됩니다. 
+  /**
+   * @description 폼 제출 시 호출됩니다.
    * 입력된 운동 정보를 서버에 저장하는 비동기 로직을 처리합니다.
    */
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,7 +129,12 @@ const AddWorkoutForm = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 운동 이름 입력 필드 */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">운동 이름</label>
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700"
+          >
+            운동 이름
+          </label>
           <input
             id="name"
             type="text"
@@ -142,7 +148,12 @@ const AddWorkoutForm = () => {
 
         {/* 운동 설명 입력 필드 */}
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">설명</label>
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-gray-700"
+          >
+            설명
+          </label>
           <textarea
             id="description"
             value={description}
@@ -155,7 +166,12 @@ const AddWorkoutForm = () => {
 
         {/* 운동 카테고리 선택 필드 */}
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">카테고리</label>
+          <label
+            htmlFor="category"
+            className="block text-sm font-medium text-gray-700"
+          >
+            카테고리
+          </label>
           <select
             id="category"
             value={selectedCategory ?? ""}
@@ -173,7 +189,12 @@ const AddWorkoutForm = () => {
 
         {/* 운동 종류 선택 필드 */}
         <div>
-          <label htmlFor="type" className="block text-sm font-medium text-gray-700">운동 종류</label>
+          <label
+            htmlFor="type"
+            className="block text-sm font-medium text-gray-700"
+          >
+            운동 종류
+          </label>
           <select
             id="type"
             value={selectedType ?? ""}
@@ -191,7 +212,12 @@ const AddWorkoutForm = () => {
 
         {/* 운동 타겟 부위 선택 필드 */}
         <div>
-          <label htmlFor="target" className="block text-sm font-medium text-gray-700">타겟 부위</label>
+          <label
+            htmlFor="target"
+            className="block text-sm font-medium text-gray-700"
+          >
+            타겟 부위
+          </label>
           <select
             id="target"
             value={selectedTarget ?? ""}
